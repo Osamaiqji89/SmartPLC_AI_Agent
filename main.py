@@ -12,6 +12,12 @@ from PySide6.QtWidgets import QApplication
 # Add config to Python path
 sys.path.insert(0, str(Path(__file__).parent / "config"))
 
+# Import Qt resources (icons, images, etc.)
+try:
+    from gui import resources_rc  # noqa: F401
+except ImportError:
+    logger.warning("Could not import resources_rc - icons may not be available")
+
 from core.data.database import init_database
 from gui.views.main_window import MainWindow
 

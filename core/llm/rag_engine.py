@@ -1,6 +1,7 @@
 """
 RAG Engine using FAISS
 """
+
 import hashlib
 import json
 from pathlib import Path
@@ -14,23 +15,26 @@ _faiss = None
 _np = None
 _SentenceTransformer = None
 
+
 def _ensure_rag_deps():
     global _deps_loaded, _deps_available, _faiss, _np, _SentenceTransformer
     if _deps_loaded:
         return _deps_available
     _deps_loaded = True
-    
+
     # Fast fail: If already tried and failed, don't retry
     import os
+
     if os.environ.get("DISABLE_RAG") == "1":
         logger.info("RAG disabled via environment variable")
         _deps_available = False
         return False
-    
+
     try:
         import faiss
         import numpy as np
         from sentence_transformers import SentenceTransformer
+
         _faiss = faiss
         _np = np
         _SentenceTransformer = SentenceTransformer
@@ -44,8 +48,14 @@ def _ensure_rag_deps():
         os.environ["DISABLE_RAG"] = "1"
         return False
 
+
 class RAGEngine:
-    def __init__(self, persist_dir="data/vector_store", collection_name="plc_knowledge", embedding_model="sentence-transformers/all-MiniLM-L6-v2"):
+    def __init__(
+        self,
+        persist_dir="data/vector_store",
+        collection_name="plc_knowledge",
+        embedding_model="sentence-transformers/all-MiniLM-L6-v2",
+    ):
         self.persist_dir = Path(persist_dir)
         self.persist_dir.mkdir(parents=True, exist_ok=True)
         self.collection_name = collection_name
@@ -68,7 +78,7 @@ class RAGEngine:
             return
         self._load_index()
         logger.info(f"RAG initialized ({len(self.documents)} docs)")
-    
+
     def _load_index(self):
         ipath = self.persist_dir / f"{self.collection_name}.index"
         dpath = self.persist_dir / f"{self.collection_name}_docs.txt"
@@ -77,21 +87,29 @@ class RAGEngine:
             try:
                 self.index = _faiss.read_index(str(ipath))
                 if dpath.exists():
-                    self.documents = [d for d in dpath.read_text(encoding="utf-8").split("\n---DOC---\n") if d.strip()]
+                    self.documents = [
+                        d
+                        for d in dpath.read_text(encoding="utf-8").split("\n---DOC---\n")
+                        if d.strip()
+                    ]
                 if mpath.exists():
-                    self.metadata = [json.loads(line) for line in mpath.read_text(encoding="utf-8").split("\n") if line.strip()]
+                    self.metadata = [
+                        json.loads(line)
+                        for line in mpath.read_text(encoding="utf-8").split("\n")
+                        if line.strip()
+                    ]
                 logger.info(f"Loaded index: {self.index.ntotal} vectors")
             except Exception as e:
                 logger.error(f"Load failed: {e}")
                 self._init_new_index()
         else:
             self._init_new_index()
-    
+
     def _init_new_index(self):
         if _faiss and self.embedder:
             self.index = _faiss.IndexFlatL2(self.dimension)
             logger.info("New FAISS index")
-    
+
     def _save_index(self):
         if not self.index:
             return
@@ -102,10 +120,13 @@ class RAGEngine:
             if _faiss:
                 _faiss.write_index(self.index, str(ipath))
             dpath.write_text("\n---DOC---\n".join(self.documents), encoding="utf-8")
-            mpath.write_text("\n".join(json.dumps(m, ensure_ascii=False) for m in self.metadata), encoding="utf-8")
+            mpath.write_text(
+                "\n".join(json.dumps(m, ensure_ascii=False) for m in self.metadata),
+                encoding="utf-8",
+            )
         except Exception as e:
             logger.error(f"Save failed: {e}")
-    
+
     def add_documents_batch(self, documents, metadatas=None, ids=None):
         if not self.embedder or not self.index or not documents:
             return []
@@ -130,7 +151,7 @@ class RAGEngine:
         except Exception as e:
             logger.error(f"Batch add failed: {e}")
             return []
-    
+
     def search(self, query, top_k=3, filters=None):
         if not self.embedder or not self.index or self.index.ntotal == 0:
             return []
@@ -151,7 +172,11 @@ class RAGEngine:
                         "metadata": self.metadata[idx] if idx < len(self.metadata) else {},
                         "distance": float(dist),
                         "score": score,
-                        "id": self.metadata[idx].get("id", str(idx)) if idx < len(self.metadata) else str(idx)
+                        "id": (
+                            self.metadata[idx].get("id", str(idx))
+                            if idx < len(self.metadata)
+                            else str(idx)
+                        ),
                     }
                     if filters:
                         if all(result["metadata"].get(k) == v for k, v in filters.items()):
@@ -163,21 +188,22 @@ class RAGEngine:
         except Exception as e:
             logger.error(f"Search failed: {e}")
             return []
-    
+
     def count(self):
         return len(self.documents)
-    
+
     def get_stats(self):
         return {
             "collection_name": self.collection_name,
             "document_count": len(self.documents),
             "total_vectors": self.index.ntotal if self.index else 0,
             "embedding_model": self.embedding_model_name,
-            "dimension": self.dimension
+            "dimension": self.dimension,
         }
-    
+
     def _generate_doc_id(self, content):
         return hashlib.sha256(content.encode()).hexdigest()[:16]
+
 
 class DocumentProcessor:
     @staticmethod
@@ -187,39 +213,41 @@ class DocumentProcessor:
         chunks = []
         start = 0
         text_len = len(text)
-        
+
         while start < text_len:
             end = min(start + chunk_size, text_len)
-            
+
             # Extract chunk
             chunk = text[start:end].strip()
             if chunk:
                 chunks.append(chunk)
-            
+
             # Move forward - ALWAYS progress
             start = start + chunk_size - chunk_overlap
-            
+
             # Safety: ensure we move at least 1 character forward
             if chunk_overlap >= chunk_size:
                 start = start + 1
-            
+
             if start >= text_len:
                 break
-        
+
         return chunks
-    
+
     @staticmethod
     def load_text_file(file_path):
         return Path(file_path).read_text(encoding="utf-8")
-    
+
     @staticmethod
     def process_pdf(file_path):
         try:
             from pypdf import PdfReader
+
             reader = PdfReader(file_path)
             return "\n".join(page.extract_text() for page in reader.pages)
         except:
             return ""
+
 
 def build_context_for_signal(rag_engine, signal_name, signal_metadata, top_k=3):
     query = f"Erkläre Signal {signal_name} {signal_metadata.get('type', '')} {signal_metadata.get('description', '')}"
@@ -229,19 +257,27 @@ def build_context_for_signal(rag_engine, signal_name, signal_metadata, top_k=3):
     if results:
         context.append("\n=== RELEVANT DOCUMENTATION ===")
         for i, r in enumerate(results, 1):
-            context.append(f"\n--- Doc {i} (Source: {r['metadata'].get('source', 'Unknown')}, Score: {r.get('score', 0):.3f}) ---")
+            context.append(
+                f"\n--- Doc {i} (Source: {r['metadata'].get('source', 'Unknown')}, Score: {r.get('score', 0):.3f}) ---"
+            )
             context.append(r["content"])
     return "\n".join(context)
 
+
 _rag_instance = None
+
 
 def get_rag_engine():
     global _rag_instance
     if _rag_instance is None:
         import sys
         from pathlib import Path
+
         # Add config to path
         sys.path.insert(0, str(Path(__file__).parent.parent.parent / "config"))
         from config import settings
-        _rag_instance = RAGEngine(persist_dir="data/vector_store", embedding_model=settings.embedding_model)
+
+        _rag_instance = RAGEngine(
+            persist_dir="data/vector_store", embedding_model=settings.embedding_model
+        )
     return _rag_instance

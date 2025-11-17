@@ -1,4 +1,5 @@
 """Test RAG Loading"""
+
 import sys
 from pathlib import Path
 
@@ -14,7 +15,7 @@ print(f"\nRAG Status: {'✅ AKTIV' if rag and rag.index else '❌ NICHT AKTIV'}"
 if rag and rag.index:
     print(f"Dokumente geladen: {len(rag.documents)}")
     print(f"Index Größe: {rag.index.ntotal} Vektoren")
-    
+
     # Test search
     results = rag.search("pressure sensor", top_k=3)
     print(f"\nTest-Suche 'pressure sensor': {len(results)} Ergebnisse")

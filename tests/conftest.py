@@ -1,6 +1,7 @@
 """
 Test Configuration for SmartPLC AI Agent
 """
+
 import sys
 import os
 from pathlib import Path
@@ -21,6 +22,7 @@ def mock_plc():
     """Fixture for Mock PLC instance"""
     try:
         from core.plc.mock_plc import MockPLC
+
         plc = MockPLC(update_interval_ms=100)
         yield plc
         plc.stop()
@@ -34,12 +36,9 @@ def rag_engine():
     try:
         from core.llm.rag_engine import RAGEngine
         import tempfile
-        
+
         with tempfile.TemporaryDirectory() as tmpdir:
-            engine = RAGEngine(
-                persist_dir=tmpdir,
-                collection_name="test_collection"
-            )
+            engine = RAGEngine(persist_dir=tmpdir, collection_name="test_collection")
             yield engine
     except Exception as e:
         pytest.skip(f"RAG engine not available: {e}")
@@ -52,13 +51,13 @@ def test_database():
         import tempfile
         from core.data.database import Base, get_engine
         from sqlalchemy import create_engine
-        
+
         # Create in-memory database
         engine = create_engine("sqlite:///:memory:")
         Base.metadata.create_all(engine)
-        
+
         yield engine
-        
+
         engine.dispose()
     except Exception as e:
         pytest.skip(f"Database not available: {e}")
@@ -70,14 +69,14 @@ def sample_documents():
     return [
         {
             "content": "AI_02_PressureSensor: Drucksensor Typ Endress+Hauser Cerabar. Messbereich 0-10 bar.",
-            "metadata": {"source": "Test Manual", "category": "signals"}
+            "metadata": {"source": "Test Manual", "category": "signals"},
         },
         {
             "content": "Fehlercode E4401: Kommunikationsfehler mit I/O-Modul 3. Prüfen Sie die Verkabelung.",
-            "metadata": {"source": "Error DB", "category": "errors"}
+            "metadata": {"source": "Error DB", "category": "errors"},
         },
         {
             "content": "Tank-Füllanlage: Pumpe P1 fördert Wasser in Tank 1. Alarm bei 95% Füllstand.",
-            "metadata": {"source": "Process Manual", "category": "processes"}
-        }
+            "metadata": {"source": "Process Manual", "category": "processes"},
+        },
     ]

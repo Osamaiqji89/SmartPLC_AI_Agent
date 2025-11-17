@@ -1,0 +1,55 @@
+# SmartPLC AI Agent Configuration
+
+# Application Settings
+app:
+  name: "SmartPLC AI Agent"
+  version: "1.0.0"
+  log_level: "INFO"
+
+# Database
+database:
+  path: "plc_data.db"
+  echo: false  # SQL query logging
+
+# PLC Simulation
+plc:
+  update_interval_ms: 500  # Signal update frequency
+  enable_simulation: true
+  processes:
+    - tank_filling
+    - conveyor_belt
+
+# OpenAI Configuration
+openai:
+  model: "gpt-3.5-turbo"  # Schneller & günstiger als GPT-4
+  fallback_model: "gpt-4-turbo-preview"
+  temperature: 0.7
+  max_tokens: 2000
+  timeout: 30
+
+# RAG Settings
+rag:
+  embedding_model: "sentence-transformers/all-MiniLM-L6-v2"
+  chunk_size: 512
+  chunk_overlap: 50
+  top_k_results: 3
+  collection_name: "plc_knowledge"
+
+# GUI Settings
+gui:
+  theme: "light"  # light | dark
+  window_width: 1400
+  window_height: 900
+  enable_animations: true
+
+# Logging
+logging:
+  file: "logs/plc_studio.log"
+  rotation: "100 MB"
+  retention: "30 days"
+  format: "<green>{time:YYYY-MM-DD HH:mm:ss}</green> | <level>{level: <8}</level> | <cyan>{name}</cyan>:<cyan>{function}</cyan> - <level>{message}</level>"
+
+# Security
+security:
+  require_api_key: false
+  enable_audit_log: true

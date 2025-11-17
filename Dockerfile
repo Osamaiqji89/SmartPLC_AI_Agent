@@ -11,24 +11,22 @@ ENV PYTHONUNBUFFERED=1 \
 
 # Install system dependencies for Qt/PySide6
 RUN apt-get update && apt-get install -y --no-install-recommends \
-    libgl1-mesa-glx \
     libglib2.0-0 \
-    libxcb-xinerama0 \
+    libgl1 \
+    libxkbcommon-x11-0 \
+    libdbus-1-3 \
+    libxcb1 \
     libxcb-icccm4 \
     libxcb-image0 \
     libxcb-keysyms1 \
     libxcb-randr0 \
     libxcb-render-util0 \
     libxcb-shape0 \
+    libxcb-xinerama0 \
     libxcb-xfixes0 \
-    libxkbcommon-x11-0 \
-    libdbus-1-3 \
-    libxi6 \
     libxrender1 \
-    libegl1-mesa \
+    libxi6 \
     libfontconfig1 \
-    libxext6 \
-    ca-certificates \
     && rm -rf /var/lib/apt/lists/*
 
 # Stage 2: Dependencies

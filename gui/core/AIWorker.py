@@ -1,8 +1,9 @@
-from PySide6.QtCore import QThread, Signal as PySignal
 from loguru import logger
+from PySide6.QtCore import QThread
+from PySide6.QtCore import Signal as PySignal
 
 from core.llm.openai_client import get_openai_client
-from core.llm.rag_engine import get_rag_engine, build_context_for_signal
+from core.llm.rag_engine import build_context_for_signal, get_rag_engine
 from core.plc.mock_plc import get_plc
 
 
@@ -88,7 +89,7 @@ class AIWorker(QThread):
                 signal_name, signal_metadata, rag_context if rag_context else None
             )
             return explanation
-        except ValueError as e:
+        except ValueError:
             # OpenAI not configured
             return self._fallback_explanation(signal_metadata)
 

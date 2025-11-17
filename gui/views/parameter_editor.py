@@ -2,28 +2,29 @@
 Parameter Editor View - Configure PLC parameters with database persistence
 """
 
-from typing import Optional, Dict, Any
-from PySide6.QtCore import Qt, QSize
+from typing import Any
+
+from loguru import logger
+from PySide6.QtCore import QSize
+from PySide6.QtGui import QFont, QIcon
 from PySide6.QtWidgets import (
-    QWidget,
-    QVBoxLayout,
+    QDialog,
+    QDialogButtonBox,
+    QDoubleSpinBox,
+    QFormLayout,
     QHBoxLayout,
+    QHeaderView,
     QLabel,
+    QLineEdit,
+    QMessageBox,
+    QPushButton,
     QTableWidget,
     QTableWidgetItem,
-    QPushButton,
-    QHeaderView,
-    QMessageBox,
-    QDialog,
-    QFormLayout,
-    QLineEdit,
-    QDoubleSpinBox,
-    QDialogButtonBox,
+    QVBoxLayout,
+    QWidget,
 )
-from PySide6.QtGui import QFont, QIcon
-from loguru import logger
 
-from core.data.database import get_session, Parameter
+from core.data.database import Parameter, get_session
 
 
 class ParameterDialog(QDialog):
@@ -122,7 +123,7 @@ class ParameterDialog(QDialog):
 
         self.accept()
 
-    def get_data(self) -> Dict[str, Any]:
+    def get_data(self) -> dict[str, Any]:
         """Get form data as dictionary"""
         return {
             "name": self.name_input.text().strip(),
@@ -387,8 +388,8 @@ class ParameterEditorView(QWidget):
     def _export_csv(self) -> None:
         """Export parameters to CSV"""
         try:
-            from datetime import datetime
             import csv
+            from datetime import datetime
             from pathlib import Path
 
             # Create export directory

@@ -48,7 +48,6 @@ def main():
         def preload_ai():
             try:
                 from core.llm.rag_engine import get_rag_engine
-                from core.llm.openai_client import get_openai_client
 
                 logger.debug("Pre-loading RAG engine...")
                 get_rag_engine()  # Loads sentence-transformers

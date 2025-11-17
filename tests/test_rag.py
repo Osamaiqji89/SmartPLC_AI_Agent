@@ -7,7 +7,7 @@ from pathlib import Path
 sys.path.insert(0, str(Path(__file__).parent / "config"))
 
 print("Testing RAG engine...")
-from core.llm.rag_engine import get_rag_engine
+from core.llm.rag_engine import get_rag_engine  # noqa: E402
 
 rag = get_rag_engine()
 print(f"\nRAG Status: {'✅ AKTIV' if rag and rag.index else '❌ NICHT AKTIV'}")

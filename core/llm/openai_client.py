@@ -4,7 +4,7 @@ Handles LLM interactions for PLC diagnostics and assistance
 """
 
 from datetime import datetime
-from typing import Any, Dict, List, Optional
+from typing import Any
 
 from loguru import logger
 from openai import OpenAI
@@ -38,7 +38,7 @@ class OpenAIClient:
         self.max_tokens = max_tokens
 
         # Conversation history
-        self.conversation_history: List[ChatCompletionMessageParam] = []
+        self.conversation_history: list[ChatCompletionMessageParam] = []
 
         # System prompt
         self.system_prompt = self._build_system_prompt()
@@ -76,7 +76,7 @@ class OpenAIClient:
 Antworte auf Deutsch, außer bei technischen Begriffen (z.B. "Analog Input", "PLC").
 """
 
-    def _define_functions(self) -> List[Dict[str, Any]]:
+    def _define_functions(self) -> list[dict[str, Any]]:
         """Define available functions for function calling"""
         return [
             {
@@ -150,8 +150,8 @@ Antworte auf Deutsch, außer bei technischen Begriffen (z.B. "Analog Input", "PL
         ]
 
     def chat(
-        self, user_message: str, context: Optional[str] = None, use_history: bool = True
-    ) -> Dict[str, Any]:
+        self, user_message: str, context: str | None = None, use_history: bool = True
+    ) -> dict[str, Any]:
         """
         Send a chat message and get response
 
@@ -164,7 +164,7 @@ Antworte auf Deutsch, außer bei technischen Begriffen (z.B. "Analog Input", "PL
             Response dict with message, usage, and function calls
         """
         # Build messages
-        messages: List[ChatCompletionMessageParam] = []
+        messages: list[ChatCompletionMessageParam] = []
 
         # Add system prompt
         messages.append({"role": "system", "content": self.system_prompt})
@@ -243,7 +243,7 @@ Antworte auf Deutsch, außer bei technischen Begriffen (z.B. "Analog Input", "PL
             }
 
     def explain_signal(
-        self, signal_name: str, signal_data: Dict[str, Any], rag_context: str
+        self, signal_name: str, signal_data: dict[str, Any], rag_context: str
     ) -> str:
         """
         Generate explanation for a signal
@@ -266,7 +266,7 @@ Antworte auf Deutsch, außer bei technischen Begriffen (z.B. "Analog Input", "PL
         response = self.chat(user_query, context=context, use_history=False)
         return response.get("message", "Keine Antwort erhalten.")
 
-    def diagnose_error(self, error_code: str, error_data: Dict[str, Any], rag_context: str) -> str:
+    def diagnose_error(self, error_code: str, error_data: dict[str, Any], rag_context: str) -> str:
         """
         Diagnose an error/alarm
 
@@ -294,7 +294,7 @@ Antworte auf Deutsch, außer bei technischen Begriffen (z.B. "Analog Input", "PL
         self.conversation_history = []
         logger.info("Conversation history cleared")
 
-    def get_conversation_history(self) -> List[Dict[str, str]]:
+    def get_conversation_history(self) -> list[dict[str, str]]:
         """Get conversation history"""
         return [
             {"role": msg["role"], "content": msg["content"]} for msg in self.conversation_history
@@ -302,7 +302,7 @@ Antworte auf Deutsch, außer bei technischen Begriffen (z.B. "Analog Input", "PL
 
 
 # Global OpenAI client instance
-_openai_client: Optional[OpenAIClient] = None
+_openai_client: OpenAIClient | None = None
 
 
 def get_openai_client() -> OpenAIClient:

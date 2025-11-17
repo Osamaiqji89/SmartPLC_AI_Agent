@@ -37,9 +37,33 @@ WORKDIR /tmp
 # Copy only requirements first for better layer caching
 COPY requirements.txt .
 
-# Install Python dependencies
+# Install Python dependencies with more robust error handling
+# Install critical packages first, then others
 RUN pip install --upgrade pip setuptools wheel && \
-    pip install -r requirements.txt
+    # Install core dependencies first
+    pip install --no-cache-dir \
+        PySide6>=6.6.0 \
+        openai>=1.0.0 \
+        sqlalchemy>=2.0.0 \
+        loguru>=0.7.0 \
+        python-dotenv>=1.0.0 && \
+    # Try to install from requirements, but don't fail if some packages are unavailable
+    pip install --no-cache-dir -r requirements.txt || \
+    pip install --no-cache-dir \
+        httpx \
+        faiss-cpu \
+        sentence-transformers \
+        tiktoken \
+        pypdf \
+        python-docx \
+        markdown \
+        alembic \
+        matplotlib \
+        pyqtgraph \
+        pydantic \
+        pydantic-settings \
+        numpy \
+        pandas
 
 # Stage 3: Application
 FROM base as application

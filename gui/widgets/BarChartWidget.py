@@ -1,6 +1,6 @@
 from PySide6.QtCore import Qt
+from PySide6.QtGui import QBrush, QColor, QFont, QPainter, QPen
 from PySide6.QtWidgets import QWidget
-from PySide6.QtGui import QFont, QPainter, QColor, QPen, QBrush
 
 
 class BarChartWidget(QWidget):
@@ -25,7 +25,7 @@ class BarChartWidget(QWidget):
 
         # Chart dimensions
         margin = 40
-        chart_width = self.width() - margin * 2
+        self.width() - margin * 2
         chart_height = self.height() - margin * 2
 
         # Draw Y-axis

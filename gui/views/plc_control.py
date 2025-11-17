@@ -4,20 +4,21 @@ Professional SCADA-style interface for PLC control
 """
 
 from datetime import datetime
-from typing import Optional
+
+from loguru import logger
 from PySide6.QtCore import Qt, QTimer
+from PySide6.QtGui import QFont
 from PySide6.QtWidgets import (
-    QWidget,
-    QVBoxLayout,
-    QHBoxLayout,
+    QCheckBox,
     QGridLayout,
     QGroupBox,
+    QHBoxLayout,
     QLabel,
-    QCheckBox,
     QSlider,
+    QVBoxLayout,
+    QWidget,
 )
-from PySide6.QtGui import QFont
-from loguru import logger
+
 from gui.widgets import LiveIndicator
 
 

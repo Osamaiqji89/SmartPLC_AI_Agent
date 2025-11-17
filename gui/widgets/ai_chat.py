@@ -2,22 +2,23 @@
 AI Chat View - Interactive assistant with RAG support
 """
 
-from PySide6.QtCore import Qt, QEvent
+from PySide6.QtCore import QEvent, Qt
+from PySide6.QtGui import QFont, QIcon
 from PySide6.QtWidgets import (
-    QWidget,
-    QVBoxLayout,
-    QHBoxLayout,
-    QTextEdit,
-    QPushButton,
-    QLabel,
+    QAbstractItemView,
     QApplication,
+    QFrame,
+    QHBoxLayout,
+    QLabel,
     QListWidget,
     QListWidgetItem,
-    QFrame,
-    QAbstractItemView,
+    QPushButton,
     QSizePolicy,
+    QTextEdit,
+    QVBoxLayout,
+    QWidget,
 )
-from PySide6.QtGui import QFont, QIcon
+
 from gui.core.AIWorker import AIWorker
 from gui.core.theme_manager import get_theme_manager
 

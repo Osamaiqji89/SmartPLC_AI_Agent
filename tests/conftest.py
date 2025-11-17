@@ -2,8 +2,8 @@
 Test Configuration for SmartPLC AI Agent
 """
 
-import sys
 import os
+import sys
 from pathlib import Path
 
 import pytest
@@ -34,8 +34,9 @@ def mock_plc():
 def rag_engine():
     """Fixture for RAG engine"""
     try:
-        from core.llm.rag_engine import RAGEngine
         import tempfile
+
+        from core.llm.rag_engine import RAGEngine
 
         with tempfile.TemporaryDirectory() as tmpdir:
             engine = RAGEngine(persist_dir=tmpdir, collection_name="test_collection")
@@ -48,9 +49,9 @@ def rag_engine():
 def test_database():
     """Fixture for test database"""
     try:
-        import tempfile
-        from core.data.database import Base, get_engine
         from sqlalchemy import create_engine
+
+        from core.data.database import Base
 
         # Create in-memory database
         engine = create_engine("sqlite:///:memory:")

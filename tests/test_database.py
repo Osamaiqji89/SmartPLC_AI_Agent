@@ -2,20 +2,21 @@
 Unit Tests for Database Models
 """
 
-import pytest
 from datetime import datetime
 
-from core.data.database import (
-    Base,
-    Project,
-    Signal,
-    Parameter,
-    AlarmLog,
-    ChatHistory,
-    SignalDocumentation,
-)
+import pytest
 from sqlalchemy import create_engine
 from sqlalchemy.orm import sessionmaker
+
+from core.data.database import (
+    AlarmLog,
+    Base,
+    ChatHistory,
+    Parameter,
+    Project,
+    Signal,
+    SignalDocumentation,
+)
 
 
 @pytest.fixture

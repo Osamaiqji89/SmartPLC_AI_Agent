@@ -3,22 +3,23 @@ Dashboard View - Overview of PLC status
 """
 
 from datetime import datetime
-from typing import Optional
-from PySide6.QtCore import Qt, QTimer
-from PySide6.QtWidgets import (
-    QWidget,
-    QVBoxLayout,
-    QHBoxLayout,
-    QLabel,
-    QGroupBox,
-    QGridLayout,
-    QTableWidget,
-    QHeaderView,
-    QSizePolicy,
-)
+
 from loguru import logger
-from PySide6.QtGui import QFont, QColor
-from gui.widgets import LiveIndicator, BarChartWidget, GaugeWidget
+from PySide6.QtCore import Qt, QTimer
+from PySide6.QtGui import QColor, QFont
+from PySide6.QtWidgets import (
+    QGridLayout,
+    QGroupBox,
+    QHBoxLayout,
+    QHeaderView,
+    QLabel,
+    QSizePolicy,
+    QTableWidget,
+    QVBoxLayout,
+    QWidget,
+)
+
+from gui.widgets import BarChartWidget, GaugeWidget, LiveIndicator
 
 
 class DashboardView(QWidget):

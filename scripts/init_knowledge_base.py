@@ -60,7 +60,7 @@ def load_knowledge_base():
                 category = "general"
 
             metadatas = []
-            for i, chunk in enumerate(chunks):
+            for i, _chunk in enumerate(chunks):
                 metadatas.append(
                     {
                         "source": f"{md_file.name}",
@@ -83,7 +83,7 @@ def load_knowledge_base():
 
     # Print statistics
     stats = rag_engine.get_stats()
-    logger.info(f"✅ Knowledge base initialized:")
+    logger.info("✅ Knowledge base initialized:")
     logger.info(f"   Total documents: {stats['document_count']}")
     logger.info(f"   Files processed: {len(md_files)}")
     logger.info(f"   Chunks added: {total_docs}")

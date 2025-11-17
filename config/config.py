@@ -3,16 +3,14 @@ Configuration Management
 Loads settings from config.yaml and .env
 """
 
-import os
 from pathlib import Path
-from typing import Any, Dict
+from typing import Any
 
 import yaml
 from dotenv import load_dotenv
 from loguru import logger
 from pydantic import Field
 from pydantic_settings import BaseSettings
-
 
 # Load environment variables
 load_dotenv()
@@ -56,7 +54,7 @@ class AppConfig(BaseSettings):
         extra = "ignore"  # Ignore extra fields from .env
 
 
-def load_yaml_config() -> Dict[str, Any]:
+def load_yaml_config() -> dict[str, Any]:
     """Load configuration from YAML file"""
     config_path = Path(__file__).parent / "config.yaml"
 
@@ -64,7 +62,7 @@ def load_yaml_config() -> Dict[str, Any]:
         logger.warning(f"Config file not found: {config_path}")
         return {}
 
-    with open(config_path, "r", encoding="utf-8") as f:
+    with open(config_path, encoding="utf-8") as f:
         return yaml.safe_load(f) or {}
 
 

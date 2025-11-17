@@ -1,7 +1,8 @@
-from PySide6.QtCore import Qt, QRectF
-from PySide6.QtWidgets import QWidget
-from PySide6.QtGui import QPainter, QColor, QPen, QBrush
 import math
+
+from PySide6.QtCore import QRectF, Qt
+from PySide6.QtGui import QBrush, QColor, QPainter, QPen
+from PySide6.QtWidgets import QWidget
 
 
 class GaugeWidget(QWidget):

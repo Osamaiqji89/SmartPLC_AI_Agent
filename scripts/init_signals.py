@@ -3,15 +3,16 @@ Initialize PLC Signals in Database
 Creates all 13 signals from MockPLC in the database
 """
 
-from pathlib import Path
 import sys
+from pathlib import Path
 
 # Add project root to path
 project_root = Path(__file__).parent.parent
 sys.path.insert(0, str(project_root))
 
-from core.data.database import get_session, Project, Signal
-from loguru import logger
+from loguru import logger  # noqa: E402
+
+from core.data.database import Project, Signal, get_session  # noqa: E402
 
 
 def init_signals():
@@ -212,7 +213,7 @@ def init_signals():
 
         session.commit()
 
-        logger.success(f"✓ Signal initialization complete!")
+        logger.success("✓ Signal initialization complete!")
         logger.success(f"  Created: {created_count} new signals")
         logger.success(f"  Updated: {updated_count} signals")
         logger.success(f"  Total: {len(signals_config)} signals")

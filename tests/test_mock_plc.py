@@ -6,8 +6,6 @@ import time
 
 import pytest
 
-from core.plc.mock_plc import MockPLC, SignalType
-
 
 class TestMockPLC:
     """Test suite for Mock PLC functionality"""

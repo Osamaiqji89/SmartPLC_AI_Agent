@@ -4,9 +4,10 @@ Handles loading and switching between Light/Dark themes
 """
 
 from pathlib import Path
+
+from loguru import logger
 from PySide6.QtCore import QObject, Signal
 from PySide6.QtWidgets import QApplication
-from loguru import logger
 
 
 class ThemeManager(QObject):
@@ -32,7 +33,7 @@ class ThemeManager(QObject):
             return False
 
         try:
-            with open(qss_file, "r", encoding="utf-8") as f:
+            with open(qss_file, encoding="utf-8") as f:
                 stylesheet = f.read()
 
             app = QApplication.instance()

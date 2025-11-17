@@ -6,13 +6,15 @@ Emulates industrial PLC behavior with full database persistence
 import random
 import threading
 import time
+from collections.abc import Callable
 from dataclasses import dataclass
 from datetime import datetime
 from enum import Enum
-from typing import Any, Callable, Dict, Optional
+from typing import Any
 
 from loguru import logger
-from core.data.database import get_session, Signal, SignalHistory, AlarmLog, Project
+
+from core.data.database import AlarmLog, Project, Signal, SignalHistory, get_session
 
 
 class SignalType(Enum):
@@ -37,8 +39,8 @@ class IOSignal:
     description: str = ""
     min_value: float = 0.0
     max_value: float = 100.0
-    alarm_threshold: Optional[float] = None
-    warning_threshold: Optional[float] = None
+    alarm_threshold: float | None = None
+    warning_threshold: float | None = None
 
 
 class MockPLC:
@@ -58,12 +60,12 @@ class MockPLC:
         self.history_interval = history_interval_s
 
         # Signal cache (for fast access)
-        self.signals: Dict[str, IOSignal] = {}
+        self.signals: dict[str, IOSignal] = {}
 
         # Threading
         self._running = False
-        self._update_thread: Optional[threading.Thread] = None
-        self._history_thread: Optional[threading.Thread] = None
+        self._update_thread: threading.Thread | None = None
+        self._history_thread: threading.Thread | None = None
         self._lock = threading.Lock()
 
         # Timing
@@ -305,7 +307,7 @@ class MockPLC:
         except Exception as e:
             logger.error(f"Failed to auto-acknowledge alarm: {e}")
 
-    def get_all_signals(self) -> Dict[str, IOSignal]:
+    def get_all_signals(self) -> dict[str, IOSignal]:
         """Get all signals (returns in-memory cache)"""
         with self._lock:
             return dict(self.signals)
@@ -403,7 +405,7 @@ class MockPLC:
             timestamp = datetime.utcnow()
 
             with self._lock:
-                for signal_name, signal in self.signals.items():
+                for _signal_name, signal in self.signals.items():
                     # Update current_value in database (for all signals)
                     db_signal = session.query(Signal).get(signal.id)
                     if db_signal:
@@ -526,7 +528,7 @@ class MockPLC:
                     if "DI_04_LimitSwitch" in self.signals:
                         self.write_signal("DI_04_LimitSwitch", True)
 
-                    logger.debug(f"Object detected! Cycle count incremented")
+                    logger.debug("Object detected! Cycle count incremented")
 
                 elif (
                     self._object_detected and random.random() < 0.05
@@ -540,7 +542,7 @@ class MockPLC:
                     if "DI_04_LimitSwitch" in self.signals:
                         self.write_signal("DI_04_LimitSwitch", False)
 
-                    logger.debug(f"Object released")
+                    logger.debug("Object released")
 
             else:
                 # Motor off, speed decreases
@@ -606,7 +608,7 @@ class MockPLC:
 
 
 # Global PLC instance
-_plc_instance: Optional[MockPLC] = None
+_plc_instance: MockPLC | None = None
 
 
 def get_plc() -> MockPLC:

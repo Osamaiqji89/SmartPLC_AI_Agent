@@ -2,9 +2,8 @@
 Unit Tests for RAG Engine
 """
 
-import pytest
 
-from core.llm.rag_engine import DocumentProcessor, RAGEngine
+from core.llm.rag_engine import DocumentProcessor
 
 
 class TestRAGEngine:

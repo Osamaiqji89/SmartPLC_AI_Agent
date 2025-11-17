@@ -5,7 +5,6 @@ RAG Engine using FAISS
 import hashlib
 import json
 from pathlib import Path
-from typing import Any, Dict, List, Optional
 
 from loguru import logger
 
@@ -134,7 +133,7 @@ class RAGEngine:
             ids = [self._generate_doc_id(doc) for doc in documents]
         if metadatas is None:
             metadatas = [{}] * len(documents)
-        for i, (doc, doc_id) in enumerate(zip(documents, ids)):
+        for i, (doc, doc_id) in enumerate(zip(documents, ids, strict=False)):
             metadatas[i]["id"] = doc_id
             metadatas[i]["length"] = len(doc)
         try:
@@ -164,7 +163,7 @@ class RAGEngine:
             k = min(top_k, len(self.documents))
             distances, indices = self.index.search(query_emb, k)
             results = []
-            for dist, idx in zip(distances[0], indices[0]):
+            for dist, idx in zip(distances[0], indices[0], strict=False):
                 if 0 <= idx < len(self.documents):
                     score = float(1 / (1 + dist))
                     result = {
@@ -245,7 +244,7 @@ class DocumentProcessor:
 
             reader = PdfReader(file_path)
             return "\n".join(page.extract_text() for page in reader.pages)
-        except:
+        except Exception:  # noqa: BLE001
             return ""
 
 

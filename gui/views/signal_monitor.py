@@ -2,18 +2,18 @@
 Signal Monitor View - Real-time I/O display with AI explanation
 """
 
-from typing import Optional
-from PySide6.QtCore import Qt, QTimer, Signal as PySignal, QSize
+from PySide6.QtCore import QSize, Qt, QTimer
+from PySide6.QtCore import Signal as PySignal
+from PySide6.QtGui import QColor, QFont, QIcon
 from PySide6.QtWidgets import (
-    QWidget,
-    QVBoxLayout,
+    QHeaderView,
+    QLabel,
+    QPushButton,
     QTableWidget,
     QTableWidgetItem,
-    QPushButton,
-    QLabel,
-    QHeaderView,
+    QVBoxLayout,
+    QWidget,
 )
-from PySide6.QtGui import QFont, QColor, QIcon
 
 
 class SignalMonitorView(QWidget):
@@ -113,7 +113,7 @@ class SignalMonitorView(QWidget):
         """Update signal values in table"""
         signals = self.plc.get_all_signals()
 
-        for row, (name, signal) in enumerate(signals.items()):
+        for row, (_name, signal) in enumerate(signals.items()):
             # Update value
             value_item = self.table.item(row, 2)
             if isinstance(signal.value, float):

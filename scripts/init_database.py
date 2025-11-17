@@ -4,16 +4,17 @@ Creates database, initializes schema, and populates with default data
 Run this script before first start of the application
 """
 
-from pathlib import Path
 import sys
+from pathlib import Path
 
 # Add project root to path
 project_root = Path(__file__).parent.parent
 sys.path.insert(0, str(project_root))
 sys.path.insert(0, str(project_root / "config"))
 
-from loguru import logger
-from core.data.database import init_database, get_session, Project, Signal, Parameter
+from loguru import logger  # noqa: E402
+
+from core.data.database import Parameter, Project, Signal, get_session, init_database  # noqa: E402
 
 
 def setup_database():

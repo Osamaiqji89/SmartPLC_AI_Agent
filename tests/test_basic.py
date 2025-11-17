@@ -3,6 +3,7 @@ Minimal test to ensure basic imports work
 """
 
 import sys
+
 import pytest
 
 
@@ -14,8 +15,8 @@ def test_python_version():
 def test_core_imports():
     """Test core module imports"""
     try:
-        from core.plc import mock_plc
-        from core.data import database
+        from core.data import database  # noqa: F401
+        from core.plc import mock_plc  # noqa: F401
 
         assert True
     except ImportError as e:
@@ -25,7 +26,7 @@ def test_core_imports():
 def test_config_import():
     """Test config module import"""
     try:
-        from config import config
+        from config import config  # noqa: F401
 
         assert True
     except ImportError as e:
@@ -38,7 +39,7 @@ def test_config_import():
 def test_gui_imports():
     """Test GUI module imports (skipped in CI)"""
     try:
-        from PySide6 import QtCore, QtWidgets
+        from PySide6 import QtCore, QtWidgets  # noqa: F401
 
         assert True
     except ImportError:

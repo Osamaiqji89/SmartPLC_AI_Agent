@@ -3,15 +3,16 @@ Initialize Default PLC Parameters
 Creates standard parameters for the SmartPLC system
 """
 
-from pathlib import Path
 import sys
+from pathlib import Path
 
 # Add project root to path
 project_root = Path(__file__).parent.parent
 sys.path.insert(0, str(project_root))
 
-from core.data.database import get_session, Project, Parameter
-from loguru import logger
+from loguru import logger  # noqa: E402
+
+from core.data.database import Parameter, Project, get_session  # noqa: E402
 
 
 def init_parameters():
@@ -171,7 +172,7 @@ def init_parameters():
 
         session.commit()
 
-        logger.success(f"✓ Parameter initialization complete!")
+        logger.success("✓ Parameter initialization complete!")
         logger.success(f"  Created: {created_count} new parameters")
         logger.success(f"  Existing: {updated_count} parameters")
         logger.success(f"  Total: {len(default_params)} parameters")

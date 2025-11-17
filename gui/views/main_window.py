@@ -4,21 +4,20 @@ Central GUI with UI file loading
 """
 
 from pathlib import Path
-from typing import Optional
-from PySide6.QtCore import Qt, QTimer, QFile
-from PySide6.QtGui import QFont
-from PySide6.QtWidgets import QMainWindow, QMessageBox
-from PySide6.QtUiTools import QUiLoader
+
 from loguru import logger
+from PySide6.QtCore import QFile, Qt, QTimer
+from PySide6.QtGui import QFont
+from PySide6.QtUiTools import QUiLoader
+from PySide6.QtWidgets import QMainWindow, QMessageBox
 
 from core.plc.mock_plc import get_plc
+from gui.core.theme_manager import get_theme_manager
 from gui.views.dashboard import DashboardView
-from gui.views.signal_monitor import SignalMonitorView
-from gui.widgets.ai_chat import AIChatView
 from gui.views.parameter_editor import ParameterEditorView
 from gui.views.plc_control import PLCControlView
-from gui.core.theme_manager import get_theme_manager
-import gui.resources_rc
+from gui.views.signal_monitor import SignalMonitorView
+from gui.widgets.ai_chat import AIChatView
 
 
 class MainWindow(QMainWindow):

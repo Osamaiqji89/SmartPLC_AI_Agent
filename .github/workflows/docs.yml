@@ -52,7 +52,8 @@ jobs:
     name: Build Documentation
     runs-on: ubuntu-latest
     needs: [check-links, lint-markdown]
-    if: github.event_name == 'push' && github.ref == 'refs/heads/main'
+    # Disabled until mkdocs.yml is created
+    if: false
     
     steps:
     - name: Checkout code

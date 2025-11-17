@@ -41,11 +41,11 @@ Oder einfach:
 ## 📖 Erste Schritte
 
 1. **Dashboard öffnen**: Übersicht über PLC-Status
-2. **Signal Monitor**: 
+2. **Signal Monitor**:
    - Klicken Sie auf "▶️ Start Pump"
    - Beobachten Sie den Tank-Level steigen
    - Klicken Sie auf "🤖 Explain" neben AI_02_PressureSensor
-3. **AI Assistant**: 
+3. **AI Assistant**:
    - Fragen Sie: "Erkläre Signal AI_02_PressureSensor"
    - Oder: "Was bedeutet Fehlercode E4401?"
 

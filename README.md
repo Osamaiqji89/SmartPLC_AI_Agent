@@ -563,7 +563,6 @@ MIT License - siehe [LICENSE](docs/LICENSE) für Details.
 
 **Probleme melden:**
 - 🐛 [GitHub Issues](https://github.com/Osamaiqji89/SmartPLC_AI_Agent/issues)
-- � [Discussions](https://github.com/Osamaiqji89/SmartPLC_AI_Agent/discussions)
 
 **Dokumentation:**
 - 📚 [Dokumentation](docs/)

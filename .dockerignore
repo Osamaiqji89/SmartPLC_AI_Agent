@@ -1,0 +1,11 @@
+# Docker
+*.db
+vector_store/
+logs/
+__pycache__/
+*.pyc
+venv/
+env/
+
+# Keep structure
+!.gitkeep

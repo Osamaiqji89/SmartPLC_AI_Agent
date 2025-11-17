@@ -1,0 +1,162 @@
+name: Release
+
+on:
+  push:
+    tags:
+      - 'v*.*.*'
+  workflow_dispatch:
+    inputs:
+      version:
+        description: 'Release version (e.g., v1.0.0)'
+        required: true
+        type: string
+
+jobs:
+  create-release:
+    name: Create Release
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+    
+    steps:
+    - name: Checkout code
+      uses: actions/checkout@v4
+      with:
+        fetch-depth: 0
+    
+    - name: Set up Python
+      uses: actions/setup-python@v5
+      with:
+        python-version: '3.11'
+    
+    - name: Get version
+      id: version
+      run: |
+        if [ "${{ github.event_name }}" == "workflow_dispatch" ]; then
+          echo "VERSION=${{ inputs.version }}" >> $GITHUB_OUTPUT
+        else
+          echo "VERSION=${GITHUB_REF#refs/tags/}" >> $GITHUB_OUTPUT
+        fi
+    
+    - name: Generate changelog
+      id: changelog
+      run: |
+        echo "# Changelog" > CHANGELOG.md
+        git log --pretty=format:"- %s (%h)" $(git describe --tags --abbrev=0 HEAD^)..HEAD >> CHANGELOG.md
+    
+    - name: Create Release
+      uses: softprops/action-gh-release@v1
+      with:
+        tag_name: ${{ steps.version.outputs.VERSION }}
+        name: Release ${{ steps.version.outputs.VERSION }}
+        body_path: CHANGELOG.md
+        draft: false
+        prerelease: false
+        generate_release_notes: true
+      env:
+        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+
+  build-executables:
+    name: Build Executables
+    needs: create-release
+    strategy:
+      matrix:
+        os: [ubuntu-latest, windows-latest, macos-latest]
+        include:
+          - os: ubuntu-latest
+            name: linux
+            artifact: smartplc-linux
+          - os: windows-latest
+            name: windows
+            artifact: smartplc-windows.exe
+          - os: macos-latest
+            name: macos
+            artifact: smartplc-macos
+    
+    runs-on: ${{ matrix.os }}
+    permissions:
+      contents: write
+    
+    steps:
+    - name: Checkout code
+      uses: actions/checkout@v4
+    
+    - name: Set up Python
+      uses: actions/setup-python@v5
+      with:
+        python-version: '3.11'
+        cache: 'pip'
+    
+    - name: Install dependencies
+      run: |
+        python -m pip install --upgrade pip
+        pip install -r requirements.txt
+        pip install pyinstaller
+    
+    - name: Build executable (Linux/macOS)
+      if: runner.os != 'Windows'
+      run: |
+        pyinstaller --name=${{ matrix.artifact }} \
+          --onefile \
+          --windowed \
+          --add-data "config:config" \
+          --add-data "knowledge_base:knowledge_base" \
+          --add-data "gui/themes:gui/themes" \
+          --hidden-import=PySide6 \
+          --hidden-import=openai \
+          --hidden-import=faiss \
+          main.py
+    
+    - name: Build executable (Windows)
+      if: runner.os == 'Windows'
+      run: |
+        pyinstaller --name=${{ matrix.artifact }} `
+          --onefile `
+          --windowed `
+          --add-data "config;config" `
+          --add-data "knowledge_base;knowledge_base" `
+          --add-data "gui/themes;gui/themes" `
+          --hidden-import=PySide6 `
+          --hidden-import=openai `
+          --hidden-import=faiss `
+          main.py
+    
+    - name: Get version
+      id: version
+      shell: bash
+      run: |
+        if [ "${{ github.event_name }}" == "workflow_dispatch" ]; then
+          echo "VERSION=${{ inputs.version }}" >> $GITHUB_OUTPUT
+        else
+          echo "VERSION=${GITHUB_REF#refs/tags/}" >> $GITHUB_OUTPUT
+        fi
+    
+    - name: Create archive (Linux/macOS)
+      if: runner.os != 'Windows'
+      run: |
+        cd dist
+        tar -czf ${{ matrix.artifact }}-${{ steps.version.outputs.VERSION }}.tar.gz ${{ matrix.artifact }}
+    
+    - name: Create archive (Windows)
+      if: runner.os == 'Windows'
+      run: |
+        cd dist
+        Compress-Archive -Path ${{ matrix.artifact }} -DestinationPath ${{ matrix.artifact }}-${{ steps.version.outputs.VERSION }}.zip
+    
+    - name: Upload Release Asset (Linux/macOS)
+      if: runner.os != 'Windows'
+      uses: softprops/action-gh-release@v1
+      with:
+        tag_name: ${{ steps.version.outputs.VERSION }}
+        files: dist/${{ matrix.artifact }}-${{ steps.version.outputs.VERSION }}.tar.gz
+      env:
+        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+    
+    - name: Upload Release Asset (Windows)
+      if: runner.os == 'Windows'
+      uses: softprops/action-gh-release@v1
+      with:
+        tag_name: ${{ steps.version.outputs.VERSION }}
+        files: dist/${{ matrix.artifact }}-${{ steps.version.outputs.VERSION }}.zip
+      env:
+        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}

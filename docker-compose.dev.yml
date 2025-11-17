@@ -1,0 +1,56 @@
+# SmartPLC AI Agent - Development Docker Compose
+# This configuration is optimized for development with live code reloading
+
+version: '3.8'
+
+services:
+  smartplc-dev:
+    build:
+      context: .
+      dockerfile: Dockerfile
+      target: base  # Use base stage for faster rebuilds
+    
+    container_name: smartplc-dev
+    
+    environment:
+      - OPENAI_API_KEY=${OPENAI_API_KEY}
+      - OPENAI_MODEL=${OPENAI_MODEL:-gpt-3.5-turbo}
+      - LOG_LEVEL=DEBUG
+      - PYTHONUNBUFFERED=1
+      - DISPLAY=${DISPLAY:-:0}
+      - QT_X11_NO_MITSHM=1
+      - QT_QPA_PLATFORM=${QT_QPA_PLATFORM:-xcb}
+    
+    volumes:
+      # Mount source code for live editing
+      - ./core:/app/core
+      - ./gui:/app/gui
+      - ./config:/app/config
+      - ./knowledge_base:/app/knowledge_base
+      - ./scripts:/app/scripts
+      - ./tests:/app/tests
+      - ./main.py:/app/main.py
+      
+      # Persistent data
+      - ./data:/app/data
+      
+      # X11 for GUI
+      - /tmp/.X11-unix:/tmp/.X11-unix:rw
+    
+    ports:
+      - "8000:8000"
+      - "5678:5678"  # Python debugger port
+    
+    command: python -m main
+    
+    restart: unless-stopped
+    
+    networks:
+      - smartplc-dev-network
+    
+    stdin_open: true
+    tty: true
+
+networks:
+  smartplc-dev-network:
+    driver: bridge

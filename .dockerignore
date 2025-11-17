@@ -1,11 +1,103 @@
-# Docker
-*.db
-vector_store/
-logs/
+# Git
+.git/
+.gitignore
+.gitattributes
+
+# GitHub
+.github/
+
+# Python
 __pycache__/
-*.pyc
+*.py[cod]
+*$py.class
+*.so
+.Python
+build/
+develop-eggs/
+dist/
+downloads/
+eggs/
+.eggs/
+lib/
+lib64/
+parts/
+sdist/
+var/
+wheels/
+pip-wheel-metadata/
+share/python-wheels/
+*.egg-info/
+.installed.cfg
+*.egg
+MANIFEST
+
+# Virtual environments
 venv/
 env/
+ENV/
+env.bak/
+venv.bak/
 
-# Keep structure
-!.gitkeep
+# IDE
+.vscode/
+.idea/
+*.swp
+*.swo
+*~
+.DS_Store
+
+# Testing
+.pytest_cache/
+.coverage
+htmlcov/
+*.cover
+.hypothesis/
+.tox/
+
+# Documentation
+docs/
+*.md
+LICENSE
+
+# Data directories (will be created at runtime)
+data/db/*.db
+data/logs/*.log
+data/exports/*.csv
+data/vector_store/*.index
+
+# Keep structure files
+!data/db/.gitkeep
+!data/logs/.gitkeep
+!data/exports/.gitkeep
+!data/vector_store/.gitkeep
+
+# Environment files
+.env
+.env.local
+.env.*.local
+*.key
+key_und_lopgdata.txt
+
+# Scripts
+scripts/docker-run.bat
+scripts/docker-run.sh
+setup_database.bat
+start.bat
+install.bat
+
+# Test files
+tests/
+conftest.py
+
+# CI/CD
+.qodo/
+
+# Docker
+.dockerignore
+.docker/
+docker-compose.yml
+
+# Temporary files
+*.tmp
+*.bak
+*.backup

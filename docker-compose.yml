@@ -1,0 +1,76 @@
+version: '3.8'
+
+services:
+  smartplc:
+    build:
+      context: .
+      dockerfile: Dockerfile
+      args:
+        - PYTHON_VERSION=3.11
+    image: smartplc-ai-agent:latest
+    container_name: smartplc-ai-agent
+    
+    environment:
+      # OpenAI Configuration
+      - OPENAI_API_KEY=${OPENAI_API_KEY}
+      - OPENAI_MODEL=${OPENAI_MODEL:-gpt-3.5-turbo}
+      
+      # Application Configuration
+      - LOG_LEVEL=${LOG_LEVEL:-INFO}
+      - PYTHONUNBUFFERED=1
+      
+      # Display for GUI (Linux only)
+      - DISPLAY=${DISPLAY:-:0}
+      - QT_X11_NO_MITSHM=1
+      - QT_QPA_PLATFORM=${QT_QPA_PLATFORM:-xcb}
+    
+    volumes:
+      # Persistent data
+      - ./data/db:/app/data/db
+      - ./data/logs:/app/data/logs
+      - ./data/exports:/app/data/exports
+      - ./data/vector_store:/app/data/vector_store
+      
+      # Configuration
+      - ./config:/app/config:ro
+      
+      # Knowledge base
+      - ./knowledge_base:/app/knowledge_base:ro
+      
+      # X11 socket for GUI (Linux only)
+      - /tmp/.X11-unix:/tmp/.X11-unix:rw
+    
+    ports:
+      - "8000:8000"
+    
+    restart: unless-stopped
+    
+    networks:
+      - smartplc-network
+    
+    healthcheck:
+      test: ["CMD", "python", "-c", "import sys; sys.exit(0)"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+      start_period: 40s
+    
+    # Resource limits
+    deploy:
+      resources:
+        limits:
+          cpus: '2'
+          memory: 2G
+        reservations:
+          cpus: '1'
+          memory: 1G
+
+networks:
+  smartplc-network:
+    driver: bridge
+
+volumes:
+  db-data:
+  logs-data:
+  exports-data:
+  vector-store-data:

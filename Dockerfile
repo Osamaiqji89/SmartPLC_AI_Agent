@@ -21,7 +21,6 @@ RUN apt-get update && apt-get install -y --no-install-recommends \
     libxcb-render-util0 \
     libxcb-shape0 \
     libxcb-xfixes0 \
-    libxcb-cursor0 \
     libxkbcommon-x11-0 \
     libdbus-1-3 \
     libxi6 \

@@ -266,13 +266,15 @@ response = client.chat(
 ### 4️⃣ AI Chat View (`gui/views/ai_chat.py`)
 
 **Klasse: `AIChatView`**
+
 - ✅ QTextEdit für Chat-Historie
 - ✅ QLineEdit für User-Input
 - ✅ Background Worker (QThread)
 - ✅ Signal-Erklärung per Button
 - ✅ Fallback ohne OpenAI
 
-**Besonderheit: AIWorker Thread**
+#### AIWorker Thread
+
 ```python
 class AIWorker(QThread):
     def run(self):
@@ -289,6 +291,7 @@ class AIWorker(QThread):
 ### 5️⃣ Signal Monitor (`gui/views/signal_monitor.py`)
 
 **Klasse: `SignalMonitorView`**
+
 - ✅ QTableWidget mit 6 Spalten
 - ✅ Echtzeit-Update (500ms)
 - ✅ 🤖 Explain-Button pro Signal
@@ -296,6 +299,7 @@ class AIWorker(QThread):
 - ✅ Steuerungs-Buttons
 
 **Explain-Button Logik:**
+
 ```python
 explain_btn.clicked.connect(
     lambda checked, s=name: self._on_explain_clicked(s)
@@ -324,7 +328,7 @@ def _on_explain_clicked(self, signal_name: str):
 
 ## 📊 Datenfluss-Übersicht
 
-```
+```text
 ┌──────────────┐
 │ User-Aktion  │
 └──────┬───────┘
@@ -359,12 +363,14 @@ def _on_explain_clicked(self, signal_name: str):
 ## 🚀 Erweiterungsmöglichkeiten
 
 ### Kurzfristig
+
 - [ ] Matplotlib-Charts für Trends
 - [ ] Alarm-Manager mit Filter/Suche
 - [ ] Export zu CSV/JSON
 - [ ] Import von Konfigurationen
 
 ### Mittelfristig
+
 - [ ] Echte PLC-Unterstützung
   - [ ] ADS (Beckhoff) via pyads
   - [ ] Modbus TCP via pymodbus

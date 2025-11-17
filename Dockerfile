@@ -78,12 +78,21 @@ RUN pip install --no-cache-dir \
         pyqtgraph \
     && rm -rf /root/.cache /tmp/*
 
-# Group 6: NLP/Embeddings (largest - install last with aggressive cleanup)
+# Group 6: NLP/Embeddings - Install minimal torch first, then transformers
+# Install torch without CUDA to save space
 RUN pip install --no-cache-dir \
+        torch --index-url https://download.pytorch.org/whl/cpu \
+    && rm -rf /root/.cache /tmp/* \
+    && find /usr/local/lib/python3.11/site-packages -type d -name "tests" -exec rm -rf {} + 2>/dev/null || true
+
+# Install transformers and sentence-transformers with minimal dependencies
+RUN pip install --no-cache-dir \
+        transformers \
         sentence-transformers \
     && rm -rf /root/.cache /tmp/* \
     && find /usr/local/lib/python3.11/site-packages -type d -name "tests" -exec rm -rf {} + 2>/dev/null || true \
     && find /usr/local/lib/python3.11/site-packages -type d -name "__pycache__" -exec rm -rf {} + 2>/dev/null || true
+
 
 # Stage 3: Application
 FROM base AS application

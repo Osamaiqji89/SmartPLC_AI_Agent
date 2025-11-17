@@ -53,7 +53,7 @@ docker-compose exec smartplc /bin/bash
 | `docker-compose.yml` | Production deployment |
 | `docker-compose.dev.yml` | Development with live reload |
 | `.dockerignore` | Files to exclude from build |
-| `docs/DOCKER.md` | Full documentation |
+| `DOCKER.md` | Full documentation |
 
 ## Troubleshooting
 
@@ -74,4 +74,4 @@ export DISPLAY=:0
 docker-compose up
 ```
 
-For detailed instructions, see [docs/DOCKER.md](docs/DOCKER.md)
+For detailed instructions, see [DOCKER.md](DOCKER.md)

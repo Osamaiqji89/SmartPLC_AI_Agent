@@ -1,6 +1,6 @@
 # SmartPLC AI Agent - Multi-Stage Docker Build
 # Stage 1: Base image with system dependencies
-FROM python:3.11-slim as base
+FROM python:3.11-slim AS base
 
 # Set environment variables
 ENV PYTHONUNBUFFERED=1 \
@@ -30,44 +30,63 @@ RUN apt-get update && apt-get install -y --no-install-recommends \
     && rm -rf /var/lib/apt/lists/*
 
 # Stage 2: Dependencies
-FROM base as dependencies
+FROM base AS dependencies
 
 WORKDIR /tmp
 
 # Copy only requirements first for better layer caching
 COPY requirements.txt .
 
-# Install Python dependencies
-# Split into multiple RUN commands for better layer caching and error visibility
-RUN pip install --upgrade pip setuptools wheel
+# Install Python dependencies in groups to manage disk space
+RUN pip install --upgrade pip setuptools wheel && rm -rf /root/.cache
 
-# Install core dependencies first
+# Group 1: Core application dependencies
 RUN pip install --no-cache-dir \
         PySide6>=6.6.0 \
         openai>=1.0.0 \
         sqlalchemy>=2.0.0 \
         loguru>=0.7.0 \
-        python-dotenv>=1.0.0
+        python-dotenv>=1.0.0 \
+    && rm -rf /root/.cache /tmp/*
 
-# Install additional dependencies
+# Group 2: Data processing and utilities
 RUN pip install --no-cache-dir \
         httpx \
-        faiss-cpu \
-        sentence-transformers \
         tiktoken \
         pypdf \
         python-docx \
         markdown \
         alembic \
-        matplotlib \
-        pyqtgraph \
         pydantic \
         pydantic-settings \
+    && rm -rf /root/.cache /tmp/*
+
+# Group 3: Scientific computing (numpy, pandas)
+RUN pip install --no-cache-dir \
         numpy \
-        pandas
+        pandas \
+    && rm -rf /root/.cache /tmp/*
+
+# Group 4: Vector database (smaller footprint)
+RUN pip install --no-cache-dir \
+        faiss-cpu \
+    && rm -rf /root/.cache /tmp/*
+
+# Group 5: Visualization (matplotlib, pyqtgraph)
+RUN pip install --no-cache-dir \
+        matplotlib \
+        pyqtgraph \
+    && rm -rf /root/.cache /tmp/*
+
+# Group 6: NLP/Embeddings (largest - install last with aggressive cleanup)
+RUN pip install --no-cache-dir \
+        sentence-transformers \
+    && rm -rf /root/.cache /tmp/* \
+    && find /usr/local/lib/python3.11/site-packages -type d -name "tests" -exec rm -rf {} + 2>/dev/null || true \
+    && find /usr/local/lib/python3.11/site-packages -type d -name "__pycache__" -exec rm -rf {} + 2>/dev/null || true
 
 # Stage 3: Application
-FROM base as application
+FROM base AS application
 
 # Create non-root user for security
 RUN useradd -m -u 1000 smartplc && \

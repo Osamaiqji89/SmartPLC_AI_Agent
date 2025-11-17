@@ -2,7 +2,7 @@
 
 ## 📊 Architektur-Diagramm
 
-```
+```text
 ┌────────────────────────────────────────────────────────────────┐
 │                         GUI LAYER (PySide6)                    │
 ├──────────────┬──────────────┬──────────────┬───────────────────┤
@@ -43,7 +43,7 @@
 
 ## 🔄 Signal Explainer - Datenfluss
 
-```
+```text
 USER ACTION: Klick auf [🤖 Explain] neben "AI_02_PressureSensor"
     │
     ├─▶ SignalMonitorView
@@ -92,7 +92,7 @@ USER ACTION: Klick auf [🤖 Explain] neben "AI_02_PressureSensor"
 
 ## 📁 Datei-Struktur
 
-```
+```text
 SmartPLC_AI_Agent/
 │
 ├── 🚀 ENTRY POINTS
@@ -167,6 +167,7 @@ SmartPLC_AI_Agent/
 ### 1️⃣ Mock PLC (`core/plc/mock_plc.py`)
 
 **Klasse: `MockPLC`**
+
 - ✅ 14 I/O-Signale (DI, DO, AI, AO)
 - ✅ Tank-Füllanlage-Simulation
   - Pumpe → Level steigt
@@ -181,6 +182,7 @@ SmartPLC_AI_Agent/
 - ✅ Alarm-Trigger bei Schwellenwert
 
 **Signale:**
+
 ```python
 AI_01_TankLevel       # 0-100%
 AI_02_PressureSensor  # 0-10 bar ⭐
@@ -196,6 +198,7 @@ DO_03_Motor
 ### 2️⃣ RAG Engine (`core/llm/rag_engine.py`)
 
 **Klasse: `RAGEngine`**
+
 - ✅ FAISS Vector Store
 - ✅ SentenceTransformer Embeddings
 - ✅ Document Chunking (512 chars, 50 overlap)
@@ -203,6 +206,7 @@ DO_03_Motor
 - ✅ Metadata Filtering
 
 **Workflow:**
+
 ```python
 # 1. Dokument hinzufügen
 rag.add_document(
@@ -225,6 +229,7 @@ context = build_context_for_signal(rag, signal_name, metadata)
 ### 3️⃣ OpenAI Client (`core/llm/openai_client.py`)
 
 **Klasse: `OpenAIClient`**
+
 - ✅ GPT-4-turbo / GPT-3.5-turbo
 - ✅ System Prompt (SPS-Experte)
 - ✅ Conversation History
@@ -232,12 +237,14 @@ context = build_context_for_signal(rag, signal_name, metadata)
 - ✅ Token Usage Tracking
 
 **Functions:**
+
 1. `read_signal(signal_name)` - PLC lesen
 2. `write_parameter(name, value)` - PLC schreiben
 3. `get_alarm_history(minutes)` - Alarme
 4. `get_signal_trend(signal_name)` - Trend
 
 **Methoden:**
+
 ```python
 # Signal erklären
 explanation = client.explain_signal(

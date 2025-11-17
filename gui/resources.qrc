@@ -1,0 +1,23 @@
+<RCC>
+  <qresource prefix="icons">
+    <file>icons/arrow-down.png</file>
+    <file>icons/arrow-up.png</file>
+    <file>icons/chat-botDark.png</file>
+    <file>icons/chat-bot.png</file>
+    <file>icons/add.png</file>
+    <file>icons/bin.png</file>
+    <file>icons/engineering.png</file>
+    <file>icons/reload.png</file>
+    <file>icons/share.png</file>
+    <file>icons/off-button.png</file>
+    <file>icons/on-button.png</file>
+    <file>icons/PLCC.png</file>
+    <file>icons/equalizer.png</file>
+    <file>icons/internet(1).png</file>
+    <file>icons/speed.png</file>
+    <file>icons/light.png</file>
+    <file>icons/night-mode.png</file>
+    <file>icons/question.png</file>
+    <file>icons/aiChat.png</file>
+  </qresource>
+</RCC>

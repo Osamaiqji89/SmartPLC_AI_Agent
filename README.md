@@ -7,7 +7,7 @@ Ein modernes SCADA-System mit integriertem AI-Assistenten für industrielle Proz
 [![Python](https://img.shields.io/badge/Python-3.8+-blue.svg)](https://www.python.org/)
 [![PySide6](https://img.shields.io/badge/PySide6-6.8-green.svg)](https://www.qt.io/qt-for-python)
 [![OpenAI](https://img.shields.io/badge/OpenAI-GPT--3.5-orange.svg)](https://openai.com/)
-[![License](https://img.shields.io/badge/License-MIT-yellow.svg)](LICENSE)
+[![License](https://img.shields.io/badge/License-MIT-yellow.svg)](docs/LICENSE)
 
 ---
 
@@ -538,7 +538,7 @@ cat data/logs/plc_studio_*.log
 
 ## 📄 Lizenz
 
-MIT License - siehe [LICENSE](LICENSE) für Details.
+MIT License - siehe [LICENSE](docs/LICENSE) für Details.
 
 ---
 
@@ -562,13 +562,13 @@ MIT License - siehe [LICENSE](LICENSE) für Details.
 ## 📞 Support
 
 **Probleme melden:**
-- 🐛 [GitHub Issues](https://github.com/your-repo/issues)
-- 📧 Email: support@smartplc.example.com
-- 💬 Discord: [Join Server](https://discord.gg/...)
+- 🐛 [GitHub Issues](https://github.com/Osamaiqji89/SmartPLC_AI_Agent/issues)
+- � [Discussions](https://github.com/Osamaiqji89/SmartPLC_AI_Agent/discussions)
 
 **Dokumentation:**
-- 📚 [Wiki](https://github.com/your-repo/wiki)
-- 🎥 [Video-Tutorials](https://youtube.com/...)
+- 📚 [Dokumentation](docs/)
+- 📖 [Architektur](docs/ARCHITECTURE.md)
+- 🐳 [Docker Setup](docs/DOCKER.md)
 
 ---
 

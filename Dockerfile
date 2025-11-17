@@ -99,7 +99,7 @@ RUN if [ -f "scripts/init_knowledge_base.py" ]; then \
 HEALTHCHECK --interval=30s --timeout=10s --start-period=40s --retries=3 \
     CMD python -c "import sys; sys.exit(0)"
 
-# Expose port for potential web interface
+# Expose port for potential web interface if needed
 EXPOSE 8000
 
 # Set the entrypoint

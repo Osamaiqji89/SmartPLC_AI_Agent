@@ -45,7 +45,7 @@ jobs:
         git log --pretty=format:"- %s (%h)" $(git describe --tags --abbrev=0 HEAD^)..HEAD >> CHANGELOG.md
     
     - name: Create Release
-      uses: softprops/action-gh-release@v1
+      uses: softprops/action-gh-release@v2
       with:
         tag_name: ${{ steps.version.outputs.VERSION }}
         name: Release ${{ steps.version.outputs.VERSION }}
@@ -145,7 +145,7 @@ jobs:
     
     - name: Upload Release Asset (Linux/macOS)
       if: runner.os != 'Windows'
-      uses: softprops/action-gh-release@v1
+      uses: softprops/action-gh-release@v2
       with:
         tag_name: ${{ steps.version.outputs.VERSION }}
         files: dist/${{ matrix.artifact }}-${{ steps.version.outputs.VERSION }}.tar.gz
@@ -154,7 +154,7 @@ jobs:
     
     - name: Upload Release Asset (Windows)
       if: runner.os == 'Windows'
-      uses: softprops/action-gh-release@v1
+      uses: softprops/action-gh-release@v2
       with:
         tag_name: ${{ steps.version.outputs.VERSION }}
         files: dist/${{ matrix.artifact }}-${{ steps.version.outputs.VERSION }}.zip

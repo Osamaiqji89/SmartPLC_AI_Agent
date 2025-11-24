@@ -1,6 +1,6 @@
 # SmartPLC AI Agent - Multi-Stage Docker Build
 # Stage 1: Base image with system dependencies
-FROM python:3.11-slim AS base
+FROM python:3.14-slim AS base
 
 # Set environment variables
 ENV PYTHONUNBUFFERED=1 \

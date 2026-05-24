@@ -15,7 +15,7 @@ jobs:
       fail-fast: false
       matrix:
         os: [ubuntu-latest, windows-latest]
-        python-version: ['3.10', '3.11', '3.12']
+        python-version: ['3.11', '3.12']
     
     steps:
     - name: Checkout code
@@ -70,6 +70,7 @@ jobs:
       run: |
         echo "QT_QPA_PLATFORM=offscreen" >> $GITHUB_ENV
         echo "OPENAI_API_KEY=test-key-for-ci" >> $GITHUB_ENV
+        echo "DISABLE_RAG=1" >> $GITHUB_ENV
       if: runner.os == 'Linux'
     
     - name: Set environment variables (Windows)
@@ -77,6 +78,11 @@ jobs:
       run: |
         echo "QT_QPA_PLATFORM=offscreen" | Out-File -FilePath $env:GITHUB_ENV -Append
         echo "OPENAI_API_KEY=test-key-for-ci" | Out-File -FilePath $env:GITHUB_ENV -Append
+        echo "DISABLE_RAG=1" | Out-File -FilePath $env:GITHUB_ENV -Append
+    
+    - name: Initialize database with default project & signals
+      run: |
+        python scripts/init_database.py
     
     - name: Run tests with coverage (Ubuntu)
       if: runner.os == 'Linux'
@@ -89,7 +95,7 @@ jobs:
           --cov-report=term-missing \
           -v \
           -m "not slow" \
-          --ignore=tests/test_gui.py || true
+          --ignore=tests/test_gui.py
     
     - name: Run tests with coverage (Windows)
       if: runner.os == 'Windows'
@@ -103,7 +109,6 @@ jobs:
           -v `
           -m "not slow" `
           --ignore=tests/test_gui.py
-      continue-on-error: true
     
     - name: Upload coverage to Codecov
       if: always()

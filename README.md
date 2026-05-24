@@ -4,10 +4,10 @@
 
 Ein modernes SCADA-System mit integriertem AI-Assistenten für industrielle Prozesssteuerung. Kombiniert PLC-Simulation, Echtzeit-Monitoring und RAG-basierte KI-Unterstützung.
 
-[![Python](https://img.shields.io/badge/Python-3.8+-blue.svg)](https://www.python.org/)
-[![PySide6](https://img.shields.io/badge/PySide6-6.8-green.svg)](https://www.qt.io/qt-for-python)
+[![Python](https://img.shields.io/badge/Python-3.11+-blue.svg)](https://www.python.org/)
+[![PySide6](https://img.shields.io/badge/PySide6-6.6.1-green.svg)](https://www.qt.io/qt-for-python)
 [![OpenAI](https://img.shields.io/badge/OpenAI-GPT--3.5-orange.svg)](https://openai.com/)
-[![License](https://img.shields.io/badge/License-MIT-yellow.svg)](docs/LICENSE)
+[![License](https://img.shields.io/badge/License-MIT-yellow.svg)](LICENSE)
 
 ---
 
@@ -106,7 +106,7 @@ python main.py
 ## 📦 Installation
 
 ### **Voraussetzungen**
-- Python 3.8 oder höher
+- Python 3.11 oder höher
 - pip (Python Package Manager)
 - 2 GB freier Speicherplatz
 - OpenAI API Key ([hier erhalten](https://platform.openai.com/api-keys))
@@ -130,7 +130,7 @@ pip install -r requirements.txt
 ```
 
 **Hauptabhängigkeiten:**
-- `PySide6>=6.8.0` - Qt GUI Framework
+- `PySide6==6.6.1` - Qt GUI Framework
 - `openai>=1.0.0` - OpenAI API Client
 - `sqlalchemy>=2.0.0` - ORM für Datenbank
 - `loguru>=0.7.0` - Logging
@@ -538,7 +538,7 @@ cat data/logs/plc_studio_*.log
 
 ## 📄 Lizenz
 
-MIT License - siehe [LICENSE](docs/LICENSE) für Details.
+MIT License - siehe [LICENSE](LICENSE) für Details.
 
 ---
 

@@ -3,8 +3,8 @@ Database Models
 SQLAlchemy ORM models for PLC data persistence
 """
 
-from datetime import datetime
-from enum import Enum
+from datetime import UTC, datetime
+from enum import StrEnum
 
 from sqlalchemy import (
     JSON,
@@ -27,7 +27,7 @@ class Base(DeclarativeBase):
     pass
 
 
-class SignalType(str, Enum):
+class SignalType(StrEnum):
     """Signal types"""
 
     DIGITAL_INPUT = "DIGITAL_INPUT"
@@ -36,6 +36,16 @@ class SignalType(str, Enum):
     ANALOG_OUTPUT = "ANALOG_OUTPUT"
     TIMER = "TIMER"
     COUNTER = "COUNTER"
+    # Legacy short-name aliases (kept for backwards compatibility)
+    DI = "DIGITAL_INPUT"
+    DO = "DIGITAL_OUTPUT"
+    AI = "ANALOG_INPUT"
+    AO = "ANALOG_OUTPUT"
+
+
+def _utcnow() -> datetime:
+    """Return current UTC time (timezone-aware)."""
+    return datetime.now(UTC)
 
 
 class Project(Base):
@@ -46,8 +56,8 @@ class Project(Base):
     id = Column(Integer, primary_key=True)
     name = Column(String(200), unique=True, nullable=False)
     description = Column(Text)
-    created_at = Column(DateTime, default=datetime.utcnow)
-    updated_at = Column(DateTime, default=datetime.utcnow, onupdate=datetime.utcnow)
+    created_at = Column(DateTime, default=_utcnow)
+    updated_at = Column(DateTime, default=_utcnow, onupdate=_utcnow)
     is_active = Column(Boolean, default=True)
 
     # Relationships
@@ -82,7 +92,7 @@ class Signal(Base):
     alarm_threshold = Column(Float)
     warning_threshold = Column(Float)
 
-    created_at = Column(DateTime, default=datetime.utcnow)
+    created_at = Column(DateTime, default=_utcnow)
 
     # Relationships
     project = relationship("Project", back_populates="signals")
@@ -97,7 +107,7 @@ class SignalHistory(Base):
     id = Column(Integer, primary_key=True)
     signal_id = Column(Integer, ForeignKey("signals.id"), nullable=False)
 
-    timestamp = Column(DateTime, default=datetime.utcnow, nullable=False, index=True)
+    timestamp = Column(DateTime, default=_utcnow, nullable=False, index=True)
     value = Column(Float, nullable=False)
 
     signal = relationship("Signal", back_populates="history")
@@ -120,8 +130,8 @@ class Parameter(Base):
     max_value = Column(Float)
 
     description = Column(Text)
-    created_at = Column(DateTime, default=datetime.utcnow)
-    updated_at = Column(DateTime, default=datetime.utcnow, onupdate=datetime.utcnow)
+    created_at = Column(DateTime, default=_utcnow)
+    updated_at = Column(DateTime, default=_utcnow, onupdate=_utcnow)
 
     project = relationship("Project", back_populates="parameters")
 
@@ -132,7 +142,7 @@ class AlarmLog(Base):
     __tablename__ = "alarm_logs"
 
     id = Column(Integer, primary_key=True)
-    timestamp = Column(DateTime, default=datetime.utcnow, nullable=False, index=True)
+    timestamp = Column(DateTime, default=_utcnow, nullable=False, index=True)
 
     signal_name = Column(String(200), nullable=False)
     alarm_type = Column(String(50))  # warning, critical, error
@@ -153,7 +163,7 @@ class ChatHistory(Base):
     __tablename__ = "chat_history"
 
     id = Column(Integer, primary_key=True)
-    timestamp = Column(DateTime, default=datetime.utcnow, nullable=False, index=True)
+    timestamp = Column(DateTime, default=_utcnow, nullable=False, index=True)
 
     role = Column(String(20), nullable=False)  # user, assistant, system
     content = Column(Text, nullable=False)
@@ -183,8 +193,8 @@ class SignalDocumentation(Base):
     # For RAG: store document ID reference
     doc_id = Column(String(100))  # FAISS document ID (hash)
 
-    created_at = Column(DateTime, default=datetime.utcnow)
-    updated_at = Column(DateTime, default=datetime.utcnow, onupdate=datetime.utcnow)
+    created_at = Column(DateTime, default=_utcnow)
+    updated_at = Column(DateTime, default=_utcnow, onupdate=_utcnow)
 
 
 class UserSettings(Base):
@@ -206,7 +216,7 @@ class UserSettings(Base):
 
     settings_json = Column(JSON)  # Additional custom settings
 
-    created_at = Column(DateTime, default=datetime.utcnow)
+    created_at = Column(DateTime, default=_utcnow)
     last_login = Column(DateTime)
 
 

@@ -34,7 +34,9 @@ jobs:
         sudo apt-get install -y \
           libglib2.0-0 \
           libgl1 \
+          libegl1 \
           libxcb1 \
+          libxcb-cursor0 \
           libxcb-xinerama0 \
           libxcb-icccm4 \
           libxcb-image0 \

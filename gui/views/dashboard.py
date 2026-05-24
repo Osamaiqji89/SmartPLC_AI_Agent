@@ -263,7 +263,7 @@ class DashboardView(QWidget):
                         active_count += 1
                 else:
                     # Analog signals: count if > 0
-                    if isinstance(signal.value, (int, float)) and signal.value > 0:
+                    if isinstance(signal.value, int | float) and signal.value > 0:
                         active_count += 1
 
             self.active_signals_label.setText(str(active_count))
@@ -316,7 +316,7 @@ class DashboardView(QWidget):
                 if signal.alarm_threshold is not None and signal.value is not None:
                     # Check if value exceeds threshold
                     if (
-                        isinstance(signal.value, (int, float))
+                        isinstance(signal.value, int | float)
                         and signal.value > signal.alarm_threshold
                     ):
                         active_alarms.append(

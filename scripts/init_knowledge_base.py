@@ -10,9 +10,9 @@ from pathlib import Path
 sys.path.insert(0, str(Path(__file__).parent.parent))
 sys.path.insert(0, str(Path(__file__).parent.parent / "config"))
 
-from loguru import logger
+from loguru import logger  # noqa: E402
 
-from core.llm.rag_engine import DocumentProcessor, get_rag_engine
+from core.llm.rag_engine import DocumentProcessor, get_rag_engine  # noqa: E402
 
 
 def load_knowledge_base():

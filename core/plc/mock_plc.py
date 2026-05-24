@@ -8,22 +8,19 @@ import threading
 import time
 from collections.abc import Callable
 from dataclasses import dataclass
-from datetime import datetime
-from enum import Enum
+from datetime import UTC, datetime
 from typing import Any
 
 from loguru import logger
 
-from core.data.database import AlarmLog, Project, Signal, SignalHistory, get_session
-
-
-class SignalType(Enum):
-    """Signal types in PLC"""
-
-    DI = "DIGITAL_INPUT"  # Digital Input
-    DO = "DIGITAL_OUTPUT"  # Digital Output
-    AI = "ANALOG_INPUT"  # Analog Input
-    AO = "ANALOG_OUTPUT"  # Analog Output
+from core.data.database import (
+    AlarmLog,
+    Project,
+    Signal,
+    SignalHistory,
+    SignalType,
+    get_session,
+)
 
 
 @dataclass
@@ -169,13 +166,13 @@ class MockPLC:
             if signal.type in (SignalType.AI, SignalType.AO):
                 try:
                     value = float(value)
-                    if not (signal.min_value <= value <= signal.max_value):
-                        logger.warning(
-                            f"Value {value} out of range [{signal.min_value}, {signal.max_value}] for {name}"
-                        )
-                        value = max(signal.min_value, min(signal.max_value, value))
                 except (ValueError, TypeError):
                     logger.error(f"Invalid value type for analog signal {name}: {value}")
+                    return False
+                if not (signal.min_value <= value <= signal.max_value):
+                    logger.warning(
+                        f"Value {value} out of range [{signal.min_value}, {signal.max_value}] for {name}"
+                    )
                     return False
 
             # Convert digital values to bool/float
@@ -200,11 +197,11 @@ class MockPLC:
 
     def _check_alarm(self, signal: IOSignal, value: Any):
         """Check if signal value exceeds alarm threshold"""
-        if not isinstance(value, (int, float)):
+        if not isinstance(value, int | float):
             return
 
         # Check alarm threshold (critical)
-        if signal.alarm_threshold and value >= signal.alarm_threshold:
+        if signal.alarm_threshold is not None and value >= signal.alarm_threshold:
             self._log_alarm(
                 signal_name=signal.name,
                 alarm_type="critical",
@@ -224,7 +221,7 @@ class MockPLC:
             )
 
         # Check warning threshold (only if alarm not triggered)
-        elif signal.warning_threshold and value >= signal.warning_threshold:
+        elif signal.warning_threshold is not None and value >= signal.warning_threshold:
             self._log_alarm(
                 signal_name=signal.name,
                 alarm_type="warning",
@@ -299,7 +296,7 @@ class MockPLC:
             if alarms:
                 for alarm in alarms:
                     alarm.acknowledged = True
-                    alarm.acknowledged_at = datetime.utcnow()
+                    alarm.acknowledged_at = datetime.now(UTC)
                 session.commit()
                 logger.info(f"✓ Auto-acknowledged alarm for {signal_name}")
 
@@ -402,12 +399,12 @@ class MockPLC:
         """Record current values of all signals to signal_history table"""
         try:
             session = get_session()
-            timestamp = datetime.utcnow()
+            timestamp = datetime.now(UTC)
 
             with self._lock:
                 for _signal_name, signal in self.signals.items():
                     # Update current_value in database (for all signals)
-                    db_signal = session.query(Signal).get(signal.id)
+                    db_signal = session.get(Signal, signal.id)
                     if db_signal:
                         db_signal.current_value = (
                             float(signal.value)
@@ -579,8 +576,8 @@ class MockPLC:
                         # Update in-memory only (don't trigger full write to avoid spam)
                         with self._lock:
                             signal.value = round(new_value, 2)
-            except Exception:
-                pass
+            except Exception as exc:
+                logger.debug(f"Noise update failed for {signal_name}: {exc}")
 
     def register_signal_change_callback(self, callback: Callable):
         """Register callback for signal changes"""

@@ -32,7 +32,13 @@ def mock_plc():
 
 @pytest.fixture
 def rag_engine():
-    """Fixture for RAG engine"""
+    """Fixture for RAG engine.
+
+    Skips if RAG dependencies (FAISS / sentence-transformers) are
+    unavailable or have been disabled via ``DISABLE_RAG=1``.
+    """
+    if os.environ.get("DISABLE_RAG") == "1":
+        pytest.skip("RAG disabled via DISABLE_RAG=1")
     try:
         import tempfile
 
@@ -40,6 +46,8 @@ def rag_engine():
 
         with tempfile.TemporaryDirectory() as tmpdir:
             engine = RAGEngine(persist_dir=tmpdir, collection_name="test_collection")
+            if engine.embedder is None or engine.index is None:
+                pytest.skip("RAG dependencies not available in this environment")
             yield engine
     except Exception as e:
         pytest.skip(f"RAG engine not available: {e}")

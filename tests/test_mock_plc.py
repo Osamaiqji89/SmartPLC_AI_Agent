@@ -2,7 +2,7 @@
 Unit Tests for Mock PLC
 """
 
-import time
+import time  # noqa: F401
 
 import pytest
 
@@ -23,7 +23,7 @@ class TestMockPLC:
     def test_read_signal(self, mock_plc):
         """Test reading signal values"""
         value = mock_plc.read_signal("AI_01_TankLevel")
-        assert isinstance(value, (int, float))
+        assert isinstance(value, int | float)
         assert 0 <= value <= 100
 
     def test_write_signal_digital(self, mock_plc):
@@ -58,12 +58,16 @@ class TestMockPLC:
 
     def test_signal_history(self, mock_plc):
         """Test signal history tracking"""
-        # Write multiple values
+        # Write multiple values and force a history snapshot after each one.
+        # In production the history thread flushes every ``history_interval``
+        # seconds; for unit tests we flush explicitly so the assertion is
+        # not timing dependent.
         mock_plc.write_signal("AI_01_TankLevel", 50.0)
-        time.sleep(0.1)
+        mock_plc._record_history()
         mock_plc.write_signal("AI_01_TankLevel", 60.0)
-        time.sleep(0.1)
+        mock_plc._record_history()
         mock_plc.write_signal("AI_01_TankLevel", 70.0)
+        mock_plc._record_history()
 
         # Get history
         history = mock_plc.get_signal_history("AI_01_TankLevel", limit=10)

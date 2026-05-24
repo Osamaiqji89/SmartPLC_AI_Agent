@@ -61,7 +61,7 @@ class AIWorker(QThread):
         if len(history) >= 2:
             trend_start = history[0]["value"]
             trend_end = history[-1]["value"]
-            if isinstance(trend_start, (int, float)) and isinstance(trend_end, (int, float)):
+            if isinstance(trend_start, int | float) and isinstance(trend_end, int | float):
                 change = trend_end - trend_start
                 if change > 0.1:
                     signal_metadata["trend"] = "↗️ steigend"

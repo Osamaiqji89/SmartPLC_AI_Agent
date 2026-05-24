@@ -2,7 +2,7 @@
 Unit Tests for Database Models
 """
 
-from datetime import datetime
+from datetime import UTC, datetime
 
 import pytest
 from sqlalchemy import create_engine
@@ -89,7 +89,7 @@ class TestDatabaseModels:
         # Add to history via relationship
         from core.data.database import SignalHistory
 
-        history_entry = SignalHistory(signal_id=signal.id, timestamp=datetime.utcnow(), value=50.0)
+        history_entry = SignalHistory(signal_id=signal.id, timestamp=datetime.now(UTC), value=50.0)
 
         db_session.add(history_entry)
         db_session.commit()
@@ -148,7 +148,7 @@ class TestDatabaseModels:
 
         # Acknowledge
         alarm.acknowledged = True
-        alarm.acknowledged_at = datetime.utcnow()
+        alarm.acknowledged_at = datetime.now(UTC)
         alarm.acknowledged_by = "test_user"
 
         db_session.commit()

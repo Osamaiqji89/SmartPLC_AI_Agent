@@ -1,12 +1,8 @@
-version: '3.8'
-
 services:
   smartplc:
     build:
       context: .
       dockerfile: Dockerfile
-      args:
-        - PYTHON_VERSION=3.11
     image: smartplc-ai-agent:latest
     container_name: smartplc-ai-agent
     

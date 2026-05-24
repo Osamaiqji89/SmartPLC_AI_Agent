@@ -126,6 +126,54 @@ class RAGEngine:
         except Exception as e:
             logger.error(f"Save failed: {e}")
 
+    def add_document(self, content, metadata=None):
+        """Add a single document to the index.
+
+        Convenience wrapper around :meth:`add_documents_batch`.
+        Returns the generated document id, or ``None`` on failure.
+        """
+        if not content:
+            return None
+        ids = self.add_documents_batch([content], [metadata] if metadata is not None else None)
+        return ids[0] if ids else None
+
+    def delete_document(self, doc_id):
+        """Delete a document by id.
+
+        FAISS ``IndexFlatL2`` does not support in-place removal, so this
+        rebuilds the index from the remaining documents.
+        """
+        if not self.embedder or not self.index or not doc_id:
+            return False
+        # Locate matching entry
+        keep_docs = []
+        keep_meta = []
+        found = False
+        for doc, meta in zip(self.documents, self.metadata, strict=False):
+            if meta.get("id") == doc_id:
+                found = True
+                continue
+            keep_docs.append(doc)
+            keep_meta.append(meta)
+        if not found:
+            return False
+        try:
+            # Rebuild index from remaining documents
+            self._init_new_index()
+            self.documents = []
+            self.metadata = []
+            if keep_docs:
+                # Re-encode and add remaining docs (reuses existing ids in metadata)
+                ids = [meta.get("id") for meta in keep_meta]
+                self.add_documents_batch(keep_docs, keep_meta, ids=ids)
+            else:
+                # Nothing left, but still persist the empty state
+                self._save_index()
+            return True
+        except Exception as e:
+            logger.error(f"Delete failed: {e}")
+            return False
+
     def add_documents_batch(self, documents, metadatas=None, ids=None):
         if not self.embedder or not self.index or not documents:
             return []

@@ -2,6 +2,7 @@
 Minimal test to ensure basic imports work
 """
 
+import os
 import sys
 from pathlib import Path
 
@@ -39,7 +40,7 @@ def test_config_module_available():
 
 
 @pytest.mark.skipif(
-    sys.platform.startswith("win") and "CI" in sys.environ, reason="Skip GUI tests in Windows CI"
+    sys.platform.startswith("win") and "CI" in os.environ, reason="Skip GUI tests in Windows CI"
 )
 def test_gui_imports():
     """Test GUI module imports (skipped in CI)"""

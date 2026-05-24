@@ -97,6 +97,9 @@ jobs:
       run: docker build -t smartplc-test:latest .
     
     - name: Test Docker image
+      # The image declares `ENTRYPOINT ["python"]`, so passing `python` as
+      # the command turns into `python python ...` which fails. Override
+      # the entrypoint when probing the runtime instead.
       run: |
-        docker run --rm smartplc-test:latest python --version
-        docker run --rm smartplc-test:latest pip list
+        docker run --rm --entrypoint python smartplc-test:latest --version
+        docker run --rm --entrypoint pip smartplc-test:latest list
